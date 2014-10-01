@@ -1,0 +1,9 @@
+{
+    "name" : "Taciturn-Chrome",
+
+    "background" : {
+        "persistent" : false,
+        "scripts" : ["eventPage.js"]
+    }
+
+}
