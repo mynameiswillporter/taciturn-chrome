@@ -15,6 +15,6 @@ $(document).ready(function() {
 			
 		}
 		console.log(cookies);
-		$("#content").html(cookies);
+		$("#content").append(cookies);
 	});    
 });

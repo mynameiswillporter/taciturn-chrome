@@ -4,6 +4,6 @@ $(document).ready(function() {
     // chrome.browserAction.setIcon({path: "./icon2.jpg"});
 
     chrome.experimental.cookies.getAll({}, function(cookies) {
-        $("#content").html(cookies);
+        $("#content").append(cookies);
     });    
 });
