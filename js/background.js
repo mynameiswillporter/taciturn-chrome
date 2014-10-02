@@ -23,6 +23,19 @@ $(document).ready(function() {
                 // get the url of the page
                 var pageUrl = sender.tab.url;	
 
+
+                // Get the query string part of the url
+                var queryString = $('<a>', { href:pageUrl } )[0].search;
+                        
+                // Check for sessions in the url
+                if (containsSessionSubstring(queryString)) {
+                    new Notification('Warning', {
+                        icon: 'img/popup.png',
+                        body: 'Session string found in query string! (' + pageUrl + ') '
+                    });
+                }
+
+
                 // Look through all of the cookies associated with this page
 			    chrome.cookies.getAll({'url': pageUrl}, function (cookies) {
     				
