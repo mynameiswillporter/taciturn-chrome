@@ -19,8 +19,12 @@ $(document).ready(function() {
 		
             // Make sure that the web page is in the browser and not in the extension
             if (sender.tab) {
-	
-			    chrome.cookies.getAll({'url': sender.tab.url}, function (cookies) {
+
+                // get the url of the page
+                var pageUrl = sender.tab.url;	
+
+                // Look through all of the cookies associated with this page
+			    chrome.cookies.getAll({'url': pageUrl}, function (cookies) {
     				
                     // Analyze the cookies on this page
                     for (cookie in cookies) {
