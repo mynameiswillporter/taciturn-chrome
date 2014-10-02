@@ -52,6 +52,20 @@ $(document).ready(function() {
 					    }
 				    }
 			    });
+
+                // Check hidden elements for session stuff.
+                $(':hidden').each(function() {
+
+                    var fieldName = $(this).attr('name');
+                    if (containsSessionSubstring(fieldName)) {
+						    new Notification('Warning', {
+							    icon: 'img/popup.png',
+							    body: 'Session found in hidden field! (' + fieldName  + ') '
+						    });
+                    }
+                })
+
+
 		        sendResponse({farewell: ''});
 	        } else {
 
