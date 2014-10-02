@@ -1,7 +1,8 @@
 $(document).ready(function() {
 
     // These are the strings used to identify possible session cookies
-    var sessionSubstrings = [ "session", "sid" ];
+    //var sessionSubstrings = [ "session", "sid", "PHPSESSID", "csrf" ];
+    var sessionSubstrings = ["sess", "sid", "csrf"];
 
 	chrome.runtime.onMessage.addListener(
 		function(request, sender, sendResponse) {
@@ -15,7 +16,7 @@ $(document).ready(function() {
 				{
                     var cookieName = cookies[cookie].name;
                     console.log(cookieName); 
-                    if (new RegExp(sessionSubstrings.join("|")).test(cookieName) && !cookies[cookie].httpOnly) 
+                    if (new RegExp(sessionSubstrings.join("|"),"i").test(cookieName) && !cookies[cookie].httpOnly) 
 					{
 						new Notification('Warning', {
 							icon: 'img/popup.png',
