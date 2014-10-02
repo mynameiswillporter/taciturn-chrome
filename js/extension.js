@@ -1,5 +1,6 @@
 $(document).ready(function() {
 	console.log("loaded");
+<<<<<<< HEAD
 
     // This can change the icon
     // chrome.browserAction.setIcon({path: "./icon2.jpg"});
@@ -18,3 +19,9 @@ $(document).ready(function() {
 		$("#content").append(cookies);
 	});    
 });
+=======
+	chrome.runtime.sendMessage({greeting: "hello"}, function(response) {
+		//do nothing
+	});	
+});
+>>>>>>> 7867c93aa39cbb2ed3f901bd9361db114edaf7b6
