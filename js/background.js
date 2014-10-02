@@ -7,7 +7,7 @@ $(document).ready(function() {
 	chrome.runtime.onMessage.addListener(
 		function(request, sender, sendResponse) {
 		
-            // If we dont check this sometimes it stack traces
+            // Make sure that the web page is in the browser and not in the extension
             if (sender.tab) {
 	
 			    chrome.cookies.getAll({'url': sender.tab.url}, function (cookies) {
@@ -28,7 +28,7 @@ $(document).ready(function() {
 		        sendResponse({farewell: ''});
 	        } else {
 
-                // I dont fully understand sender.tab yet so putting this here just incase
+                // It appears as though this occurs when the webpage accessed is the extension
                 console.log("Not processing this page because sender.tab did not exist");
             }
     });
