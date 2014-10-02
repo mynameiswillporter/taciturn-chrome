@@ -1,5 +1,8 @@
 $(document).ready(function() {
-	//do nothing
+
+    // These are the strings used to identify possible session cookies
+    var sessionSubstrings = [ "session", "sid" ];
+
 	chrome.runtime.onMessage.addListener(
 		function(request, sender, sendResponse) {
 			console.log(sender.tab ?
@@ -10,7 +13,9 @@ $(document).ready(function() {
 				console.log(cookies);
 				for (cookie in cookies)
 				{
-					if (cookies[cookie].name.indexOf('session') >= 0 && !cookies[cookie].httpOnly)
+                    var cookieName = cookies[cookie].name;
+                    console.log(cookieName); 
+                    if (new RegExp(sessionSubstrings.join("|")).test(cookieName) && !cookies[cookie].httpOnly) 
 					{
 						new Notification('Warning', {
 							icon: 'img/popup.png',
