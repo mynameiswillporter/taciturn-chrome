@@ -1,8 +1,18 @@
-$(document).ready(function() {
 
+function containsSessionSubstring(testString) {
+    
     // These are the strings used to identify possible session cookies
     //var sessionSubstrings = [ "session", "sid", "PHPSESSID", "csrf" ];
     var sessionSubstrings = ["sess", "sid", "csrf"];
+
+    // Create a case insensitive regular expression from the session substrings
+    var sessionRegExp = new RegExp(sessionSubstrings.join("|"), "i");
+
+    return sessionRegExp.test(testString);
+    
+}
+
+$(document).ready(function() {
 
 	chrome.runtime.onMessage.addListener(
 		function(request, sender, sendResponse) {
@@ -11,13 +21,13 @@ $(document).ready(function() {
             if (sender.tab) {
 	
 			    chrome.cookies.getAll({'url': sender.tab.url}, function (cookies) {
-				    console.log(cookies);
-    				for (cookie in cookies)
-	    			{
+    				
+                    // Analyze the cookies on this page
+                    for (cookie in cookies) {
                         var cookieName = cookies[cookie].name;
-                        console.log(cookieName); 
-                        if (new RegExp(sessionSubstrings.join("|"),"i").test(cookieName) && !cookies[cookie].httpOnly) 
-					    {
+                        
+                        // Send a notification if there is a possible HttpOnly session cookie
+                        if (containsSessionSubstring(cookieName) && !cookies[cookie].httpOnly) {
 						    new Notification('Warning', {
 							    icon: 'img/popup.png',
 							    body: 'Insecure session cookie found! (' + cookies[cookie].domain + '/' + cookies[cookie].name + ') '
