@@ -14,8 +14,8 @@ function containsSessionSubstring(testString) {
 
 $(document).ready(function() {
 
-	chrome.runtime.onMessage.addListener(
-		function(request, sender, sendResponse) {
+    chrome.runtime.onMessage.addListener(
+        function(request, sender, sendResponse) {
 		
             // Make sure that the web page is in the browser and not in the extension
             if (sender.tab) {
@@ -37,7 +37,7 @@ $(document).ready(function() {
 
 
                 // Look through all of the cookies associated with this page
-			    chrome.cookies.getAll({'url': pageUrl}, function (cookies) {
+                chrome.cookies.getAll({'url': pageUrl}, function (cookies) {
     				
                     // Analyze the cookies on this page
                     for (cookie in cookies) {
@@ -45,33 +45,34 @@ $(document).ready(function() {
                         
                         // Send a notification if there is a possible HttpOnly session cookie
                         if (containsSessionSubstring(cookieName) && !cookies[cookie].httpOnly) {
-						    new Notification('Warning', {
-							    icon: 'img/popup.png',
-							    body: 'Insecure session cookie found! (' + cookies[cookie].domain + '/' + cookies[cookie].name + ') '
-						    });
-					    }
-				    }
-			    });
+                            new Notification('Warning', {
+                                icon: 'img/popup.png',
+                                body: 'Insecure session cookie found! (' + cookies[cookie].domain + '/' + cookies[cookie].name + ') '
+                            });
+                        }
+                    }
+                });
 
                 // Check hidden elements for session stuff.
                 $(':hidden').each(function() {
 
                     var fieldName = $(this).attr('name');
                     if (containsSessionSubstring(fieldName)) {
-						    new Notification('Warning', {
-							    icon: 'img/popup.png',
-							    body: 'Session found in hidden field! (' + fieldName  + ') '
-						    });
+                        new Notification('Warning', {
+                            icon: 'img/popup.png',
+                            body: 'Session found in hidden field! (' + fieldName  + ') '
+                        });
                     }
                 })
 
 
-		        sendResponse({farewell: ''});
-	        } else {
+                sendResponse({farewell: ''});
+            } else {
 
                 // It appears as though this occurs when the webpage accessed is the extension
                 console.log("Not processing this page because sender.tab did not exist");
             }
-    });
+        }
+    );
 });
 
