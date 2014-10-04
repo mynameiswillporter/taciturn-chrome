@@ -5,21 +5,21 @@
     "version" : "0.1",
 
     "permissions" : [
-		"cookies",
-		"notifications",
+        "cookies",
+        "notifications",
         "http://*/*", 
-		"https://*/*"
+        "https://*/*"
     ],
 
     "background" : {
-		"page": "background.html"
+        "page": "background.html"
     },
 	
-	"content_scripts" : [{
-		"matches" : ["*://*/*"],
-		"js" : ["js/jquery-1.11.1.js",
-			"js/extension.js"]
-	}],
+    "content_scripts" : [{
+        "matches" : ["*://*/*"],
+        "js" : ["js/jquery-1.11.1.js",
+            "js/extension.js"]
+    }],
 	
     "browser_action" : {
         "default_icon" : "img/icon.png",
