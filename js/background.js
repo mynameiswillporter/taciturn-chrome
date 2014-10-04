@@ -16,13 +16,16 @@ $(document).ready(function() {
 
     chrome.runtime.onMessage.addListener(
         function(request, sender, sendResponse) {
+
+            // Get the html from the message, this is currentlythe only contents of the message
+            var pageHtml = request.html;
+            console.log(pageHtml);
 		
             // Make sure that the web page is in the browser and not in the extension
             if (sender.tab) {
 
                 // get the url of the page
                 var pageUrl = sender.tab.url;	
-
 
                 // Get the query string part of the url
                 var queryString = $('<a>', { href:pageUrl } )[0].search;
@@ -55,7 +58,25 @@ $(document).ready(function() {
 
                 // This is wrong because its not checking the dom of the webpage.
                 // Check hidden elements for session stuff.
-                $('input:hidden').each(function() {
+
+                $(pageHtml).find('input:hidden').each(function() {
+                    console.log(this);
+                    var fieldName = $(this).attr('name');
+                    var fieldTitle = $(this).attr('title');
+                    
+                    if (containsSessionSubstring(fieldName) || containsSessionSubstring(fieldTitle)) {
+                        console.log("Hello");
+                        new Notification('Warning', {
+                            icon: '../img/popup.png',
+                            body: 'Session found in hidden field! (' + fieldName  + ') '
+                        });
+                    }
+                    
+
+                });
+                
+                /*
+                $(pageHtml).find('input:hidden').each(function() {
 
                     var fieldName = $(this).attr('name');
                     if (containsSessionSubstring(fieldName)) {
@@ -64,7 +85,7 @@ $(document).ready(function() {
                             body: 'Session found in hidden field! (' + fieldName  + ') '
                         });
                     }
-                })
+                })*/
 
 
                 sendResponse({farewell: ''});
