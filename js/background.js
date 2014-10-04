@@ -53,8 +53,9 @@ $(document).ready(function() {
 				    }
 			    });
 
+                // This is wrong because its not checking the dom of the webpage.
                 // Check hidden elements for session stuff.
-                $(':hidden').each(function() {
+                $('input:hidden').each(function() {
 
                     var fieldName = $(this).attr('name');
                     if (containsSessionSubstring(fieldName)) {
