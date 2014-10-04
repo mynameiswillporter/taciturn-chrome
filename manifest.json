@@ -7,6 +7,7 @@
     "permissions" : [
         "cookies",
         "notifications",
+        "storage",
         "http://*/*", 
         "https://*/*"
     ],
@@ -24,5 +25,7 @@
     "browser_action" : {
         "default_icon" : "img/icon.png",
         "default_popup" : "popup.html"
-    }
+    },
+
+    "options_page": "options.html"
 }
