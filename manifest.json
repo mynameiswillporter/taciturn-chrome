@@ -13,19 +13,19 @@
     ],
 
     "background" : {
-        "page": "background.html"
+        "page": "./html/background.html"
     },
 	
     "content_scripts" : [{
         "matches" : ["*://*/*"],
-        "js" : ["js/jquery-1.11.1.js",
-            "js/extension.js"]
+        "js" : ["./js/jquery-1.11.1.js",
+            "./js/foreground.js"]
     }],
 	
     "browser_action" : {
-        "default_icon" : "img/icon.png",
-        "default_popup" : "popup.html"
+        "default_icon" : "./img/icon.png",
+        "default_popup" : "./html/popup.html"
     },
 
-    "options_page": "options.html"
+    "options_page": "./html/options.html"
 }
