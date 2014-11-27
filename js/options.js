@@ -3,6 +3,7 @@ function save_options()
 
     var options = get_supported_checks();
     var save = options;
+    var domain = {};
 
     //step over domains and get the exclusions
 
@@ -11,52 +12,38 @@ function save_options()
         console.log(children);
         for (var i = 0; i < children.length; i++)
         {
-            console.log(i + ' ' + children[i]);
-/*
-            if (children[i].find('td') == 1)
+            console.log('added ' + children[i]['textContent']);
+            console.log(options);
+            for (item in options)
             {
-                console.log('hi');
+                domain[children[i]['textContent']] = {};
+                domain[children[i]['textContent']]['options'] = {};
+                domain[children[i]['textContent']]['options'][options[item]] = {};
+                for (each in options[item])
+                {
+                    domain[children[i]['textContent']]['options'][options[item]][options[item][each]] = 1;
+                }
+                //we really should pull this out of the body, but for now hard code
+                
+                console.log("hihih" +JSON.stringify(domain, null, 4));
+                console.log(options[item]);
+                //domain['domain'] = children[i]['textContent'];
+                
+                //domain['options']['name'] = options[item];
             }
-*/
+            return;
+            domain[domain.length] = children[i]['textContent'];
         }
     });
 
-    /*
-    $(".domain").each(function() {
-        //get anything checked
-        console.log('looking at ' + $(this).text() + ', with a length of ' + options.count);
-        for (var i = 0; i < options.count; i++)
-        {
-            var name = '#' + $(this).text() + i;
-            console.log(name);
-            $(name).each(function() {
-                console.log('value: ' + $(this).checked);
-            });
-        }
-    });
-*/
-/*
-    for (each in options)
-    {
-        for (each2 in options[each])
-        {
-            save[each][each2] = {options[each][each2]: []};
-            console.log(options[each][each2]);
-            //if (options[each][each2].length > 0)
-            //{
-            //    console.log(options[each][each2]);
-            //}
-        }
-    }
-*/
-    domain.push(document.getElementById('domain').value);
+    //domain.push(document.getElementById('domain').value);
     chrome.storage.sync.set({
         ignoredDomains: domain
     }, function () {
         //Update status to let user know options were saved
         var status = document.getElementById('status');
         status.textContent = 'Options saved.';
-        setTimoeout(function () {
+        setTimeout(function () {
             status.textContent = '';
         }, 750);
     });
@@ -72,6 +59,7 @@ function create_options_page(options)
     var table = document.createElement('table');
     table.style.width = '100%';
     table.setAttribute('border', '1');
+    table.setAttribute('id', 'myTable');
     var tbody = document.createElement('tbody');
 
     //create the top row with groups of things we're looking for
@@ -108,11 +96,12 @@ function create_options_page(options)
     table.appendChild(tr);
     table.appendChild(tr2);
 
+    /*
     //temporary. remove before pushing
     var tr3 = document.createElement('tr');
     var td = document.createElement('td');
-//    td.id = 'domain';
     td.className = 'domain';
+    td.id = 'domain';
     td.appendChild(document.createTextNode('google.com'));
     tr3.className = 'addme';
     tr3.appendChild(td);
@@ -127,6 +116,7 @@ function create_options_page(options)
         tr3.appendChild(td);
     }
     table.appendChild(tr3);
+    */
     //end temporary
 
     body.appendChild(table);
@@ -144,12 +134,33 @@ function restore_options()
 {
     var options = get_supported_checks();
     create_options_page(options);
-    chrome.storage.sync.get({
-        ignoredDomains: ['Google'],
-    }, function(items) {
+    chrome.storage.sync.get(
+        //ignoredDomains: ['Google'],
+       'ignoredDomains', 
+    function(items) {
+        console.log("hello " + JSON.stringify(items, null, 4));
         for (item in items.ignoredDomains)
         {
-            document.getElementById('domain').value = items.ignoredDomains[item];
+            console.log("loaded domain " + items.ignoredDomains[item]);
+            var table = document.getElementById('myTable');
+            //document.getElementById('domain').value = items.ignoredDomains[item];
+            var tr3 = document.createElement('tr');
+            var td = document.createElement('td');
+            td.className = 'domain';
+            td.id = 'domain';
+            td.appendChild(document.createTextNode(items.ignoredDomains[item]));
+            tr3.className = 'addme';
+            tr3.appendChild(td);
+            table.appendChild(tr3);
+            for (var i = 0; i < 6; i++)
+            {
+                var td = document.createElement('td');
+                var input = document.createElement('input');
+                input.type = 'checkbox';
+                input.value = items.ignoredDomains[item] + i;
+                td.appendChild(input);
+                tr3.appendChild(td);
+            }
         }
        });
 }
