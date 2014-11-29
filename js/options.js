@@ -12,21 +12,23 @@ function save_options()
         console.log(children);
         for (var i = 0; i < children.length; i++)
         {
-            console.log('added ' + children[i]['textContent']);
-            console.log(options);
+            domain[children[i]['textContent']] = {};
+            domain[children[i]['textContent']]['options'] = options;
+
             for (item in options)
             {
-                domain[children[i]['textContent']] = {};
-                domain[children[i]['textContent']]['options'] = {};
-                domain[children[i]['textContent']]['options'][options[item]] = {};
-                for (each in options[item])
+                console.log("item " + item);
+                domain[children[i]['textContent']]['options'][item] = {};
+                for (each in item)
                 {
-                    domain[children[i]['textContent']]['options'][options[item]][options[item][each]] = 1;
+                    console.log("item" + item);
+                    console.log("options " + item[each]);
+                    domain[children[i]['textContent']]['options'][item][options[item][each]] = 1;
                 }
                 //we really should pull this out of the body, but for now hard code
                 
                 console.log("hihih" +JSON.stringify(domain, null, 4));
-                console.log(options[item]);
+//                console.log(options[item]);
                 //domain['domain'] = children[i]['textContent'];
                 
                 //domain['options']['name'] = options[item];
