@@ -1,6 +1,5 @@
 function save_options()
 {
-
     var options = get_supported_checks();
     var save = options;
     var domain = {};
@@ -9,31 +8,47 @@ function save_options()
 
     $(".addme").each(function() {
         var children = $(this);
-        console.log(children);
+        //console.log("hi"+children);
         for (var i = 0; i < children.length; i++)
         {
+            var checked = 0;
+            console.log("searching for '" + children[i]['textContent'] + i + "'")
+            //$("#" + children[i]['textContent'] + i).each(function(){
+            $("#google.com0").each(function() {
+                console.log("hello" + ($this).checked)
+                if ($(this).checked)
+                    checked = 1;
+                else
+                    checked = 0;
+            });
+            console.log(i);
             domain[children[i]['textContent']] = {};
-            domain[children[i]['textContent']]['options'] = options;
 
-            for (item in options)
+            for (var key in options) 
             {
-                console.log("item " + item);
-                domain[children[i]['textContent']]['options'][item] = {};
-                for (each in item)
+                if (options.hasOwnProperty(key) && key != "count") 
                 {
-                    console.log("item" + item);
-                    console.log("options " + item[each]);
-                    domain[children[i]['textContent']]['options'][item][options[item][each]] = 1;
+                    domain[children[i]['textContent']][key] = {};
+                    for (var x = 0; x < options[key].length; x++)
+                    {
+                        if (checked)
+                        {
+                            domain[children[i]['textContent']][key][options[key][x]] = 1;    
+                            console.log("checked");
+                        }
+                        else
+                        {
+                            domain[children[i]['textContent']][key][options[key][x]] = 0;
+                            console.log("not checked");
+                        }
+                    }
+                    
+                    //console.log("hey, does it work " + JSON.stringify(domain, null, 4));
                 }
-                //we really should pull this out of the body, but for now hard code
-                
-                console.log("hihih" +JSON.stringify(domain, null, 4));
-//                console.log(options[item]);
-                //domain['domain'] = children[i]['textContent'];
-                
-                //domain['options']['name'] = options[item];
             }
-            return;
+            
+            //we really should pull this out of the body, but for now hard code
+            //console.log("hihih" +JSON.stringify(domain, null, 4));
             domain[domain.length] = children[i]['textContent'];
         }
     });
@@ -78,19 +93,19 @@ function create_options_page(options)
     {
         if (key != 'count')
         {
-        var th = document.createElement('th');
-        th.setAttribute('colspan', options[key].length);
-        th.appendChild(document.createTextNode(key));
-        tr.appendChild(th);
+            var th = document.createElement('th');
+            th.setAttribute('colspan', options[key].length);
+            th.appendChild(document.createTextNode(key));
+            tr.appendChild(th);
 
-        //step through each sub-item and add them to the second header row so we can append them later
-        for (key2 in options[key])
-        {
-            var th2 = document.createElement('th');
-            th2.setAttribute('colspan', '1');
-            th2.appendChild(document.createTextNode(options[key][key2]));
-            tr2.appendChild(th2);
-        }
+            //step through each sub-item and add them to the second header row so we can append them later
+            for (key2 in options[key])
+            {
+                var th2 = document.createElement('th');
+                th2.setAttribute('colspan', '1');
+                th2.appendChild(document.createTextNode(options[key][key2]));
+                tr2.appendChild(th2);
+            }
         }
     }
 
@@ -98,7 +113,7 @@ function create_options_page(options)
     table.appendChild(tr);
     table.appendChild(tr2);
 
-    /*
+    ///*
     //temporary. remove before pushing
     var tr3 = document.createElement('tr');
     var td = document.createElement('td');
@@ -113,12 +128,12 @@ function create_options_page(options)
         var td = document.createElement('td');
         var input = document.createElement('input');
         input.type = 'checkbox';
-        input.value = 'google.com' + i;
+        input.id = 'google.com' + i;
         td.appendChild(input);
         tr3.appendChild(td);
     }
     table.appendChild(tr3);
-    */
+    //*/
     //end temporary
 
     body.appendChild(table);
@@ -140,12 +155,13 @@ function restore_options()
         //ignoredDomains: ['Google'],
        'ignoredDomains', 
     function(items) {
-        console.log("hello " + JSON.stringify(items, null, 4));
+        //console.log("hello " + JSON.stringify(items, null, 4));
         for (item in items.ignoredDomains)
         {
-            console.log("loaded domain " + items.ignoredDomains[item]);
+            console.log("loaded domain " + item);// items.ignoredDomains[item]);
+            console.log("Full object - " + JSON.stringify(items.ignoredDomains[item], null, 4));
             var table = document.getElementById('myTable');
-            //document.getElementById('domain').value = items.ignoredDomains[item];
+            //document.getElementById('domain').value = Items.ignoredDomains[item];
             var tr3 = document.createElement('tr');
             var td = document.createElement('td');
             td.className = 'domain';
@@ -153,16 +169,35 @@ function restore_options()
             td.appendChild(document.createTextNode(items.ignoredDomains[item]));
             tr3.className = 'addme';
             tr3.appendChild(td);
-            table.appendChild(tr3);
-            for (var i = 0; i < 6; i++)
+            //iterate over options
+            for (var key in items.ignoredDomains[item]) 
             {
-                var td = document.createElement('td');
-                var input = document.createElement('input');
-                input.type = 'checkbox';
-                input.value = items.ignoredDomains[item] + i;
-                td.appendChild(input);
-                tr3.appendChild(td);
+                if (items.ignoredDomains[item].hasOwnProperty(key) && key != "count") 
+                {
+                    //iterate over values of those options
+                    for (var key2 in items.ignoredDomains[item][key])
+                    {
+                        if (items.ignoredDomains[item][key].hasOwnProperty(key2) && key2 != "count")
+                        {
+                            var td = document.createElement('td');
+                            td.classname = item;
+                            td.id = item;
+                            var input = document.createElement('input');
+                            input.type = 'checkbox';
+                            console.log("Item: " + key + "/" + JSON.stringify(items.ignoredDomains[item][key][key2], null, 4)); 
+                            console.log("Vaue: " + key2);
+                            console.log("Row " + tr3);
+                            if (items.ignoredDomains[item][key][key2] == 1)
+                            {
+                                input.checked = key2;   
+                            }
+                            td.appendChild(input);
+                            tr3.appendChild(td);
+                        }
+                    }
+                }
             }
+            table.appendChild(tr3);
         }
        });
 }
