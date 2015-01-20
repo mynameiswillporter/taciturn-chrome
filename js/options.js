@@ -1,59 +1,53 @@
+var my_domains = [];
+
+//step over domains and get the exclusions
 function save_options()
 {
     var options = get_supported_checks();
     var save = options;
     var domain = {};
 
-    //step over domains and get the exclusions
-
     $(".addme").each(function() {
         var children = $(this);
-        //console.log("hi"+children);
+        //iterate over each domain with a saved setting
         for (var i = 0; i < children.length; i++)
         {
-            var checked = 0;
-            console.log("searching for '" + children[i]['textContent'] + i + "'")
-            //$("#" + children[i]['textContent'] + i).each(function(){
-            $("#google.com0").each(function() {
-                console.log("hello" + ($this).checked)
-                if ($(this).checked)
-                    checked = 1;
-                else
-                    checked = 0;
-            });
-            console.log(i);
-            domain[children[i]['textContent']] = {};
-
-            for (var key in options) 
+            var temp_domain = children[i]['textContent'];
+            //define an empty dict for the domain
+            domain[temp_domain] = {};
+            
+            //iterate over the option categories
+            //options is in {category:option} format
+            var counter = 0;
+            for (var category in options)
             {
-                if (options.hasOwnProperty(key) && key != "count") 
+                if (options.hasOwnProperty(category) && category != "count")
                 {
-                    domain[children[i]['textContent']][key] = {};
-                    for (var x = 0; x < options[key].length; x++)
+                    if (domain[temp_domain][category] == null)
                     {
-                        if (checked)
+                        domain[temp_domain][category] = {};
+                    }
+                    //iterate over the options within the category
+                    for (var x = 0; x < options[category].length; x++)
+                    {
+                        //determine if it is checked or not
+                        if (document.getElementById(temp_domain + counter).checked)
                         {
-                            domain[children[i]['textContent']][key][options[key][x]] = 1;    
-                            console.log("checked");
+                            domain[temp_domain][category][options[category][x]] = 1;
                         }
                         else
                         {
-                            domain[children[i]['textContent']][key][options[key][x]] = 0;
-                            console.log("not checked");
+                            domain[temp_domain][category][options[category][x]] = 0;
                         }
+                        counter++;
                     }
-                    
-                    //console.log("hey, does it work " + JSON.stringify(domain, null, 4));
                 }
             }
-            
-            //we really should pull this out of the body, but for now hard code
-            //console.log("hihih" +JSON.stringify(domain, null, 4));
-            domain[domain.length] = children[i]['textContent'];
         }
+        //debug: print out our completed object
+        console.log(JSON.stringify(domain, null, 4));
     });
 
-    //domain.push(document.getElementById('domain').value);
     chrome.storage.sync.set({
         ignoredDomains: domain
     }, function () {
@@ -113,7 +107,7 @@ function create_options_page(options)
     table.appendChild(tr);
     table.appendChild(tr2);
 
-    ///*
+    /*
     //temporary. remove before pushing
     var tr3 = document.createElement('tr');
     var td = document.createElement('td');
@@ -122,7 +116,7 @@ function create_options_page(options)
     td.appendChild(document.createTextNode('google.com'));
     tr3.className = 'addme';
     tr3.appendChild(td);
-    
+
     for (var i = 0; i < 6; i++)
     {
         var td = document.createElement('td');
@@ -133,7 +127,7 @@ function create_options_page(options)
         tr3.appendChild(td);
     }
     table.appendChild(tr3);
-    //*/
+    */
     //end temporary
 
     body.appendChild(table);
@@ -143,7 +137,8 @@ function get_supported_checks()
 {
     //this is a list of supported checks.  currently, it is hard-coded in code
     //it should be moved to chrome.storage.sync
-    options = {"html": ["hidden_field"], "cookies": ["csrf", "session"], "headers": ["present", "missing"], "urls": ["session fixation"], "count": 6};
+    //**must** be alphabetical (though I think this will happen automatically when we move it to the chrome storage)
+    options = {"cookies": ["csrf", "session"], "headers": ["missing", "present"], "html": ["hidden_field"], "urls": ["session fixation"], "count": 6};
     return options;
 }
 
@@ -152,56 +147,97 @@ function restore_options()
     var options = get_supported_checks();
     create_options_page(options);
     chrome.storage.sync.get(
-        //ignoredDomains: ['Google'],
-       'ignoredDomains', 
+       'ignoredDomains',
     function(items) {
-        //console.log("hello " + JSON.stringify(items, null, 4));
-        for (item in items.ignoredDomains)
+        console.log("loaded " + JSON.stringify(items, null, 4));
+        for (var item in items.ignoredDomains)
         {
-            console.log("loaded domain " + item);// items.ignoredDomains[item]);
-            console.log("Full object - " + JSON.stringify(items.ignoredDomains[item], null, 4));
+            console.log("loaded domain " + item);
+            my_domains.push(item);
+            console.log("object - " + JSON.stringify(items.ignoredDomains[item], null, 4));
             var table = document.getElementById('myTable');
-            //document.getElementById('domain').value = Items.ignoredDomains[item];
             var tr3 = document.createElement('tr');
             var td = document.createElement('td');
             td.className = 'domain';
             td.id = 'domain';
-            td.appendChild(document.createTextNode(items.ignoredDomains[item]));
+            td.appendChild(document.createTextNode(item));
             tr3.className = 'addme';
             tr3.appendChild(td);
+            var counter = 0;
             //iterate over options
-            for (var key in items.ignoredDomains[item]) 
+            for (var category in items.ignoredDomains[item])
             {
-                if (items.ignoredDomains[item].hasOwnProperty(key) && key != "count") 
+                if (items.ignoredDomains[item].hasOwnProperty(category) && category != "count")
                 {
                     //iterate over values of those options
-                    for (var key2 in items.ignoredDomains[item][key])
+                    for (var option in items.ignoredDomains[item][category])
                     {
-                        if (items.ignoredDomains[item][key].hasOwnProperty(key2) && key2 != "count")
+                        if (items.ignoredDomains[item][category].hasOwnProperty(option) && option != "count")
                         {
                             var td = document.createElement('td');
                             td.classname = item;
                             td.id = item;
                             var input = document.createElement('input');
                             input.type = 'checkbox';
-                            console.log("Item: " + key + "/" + JSON.stringify(items.ignoredDomains[item][key][key2], null, 4)); 
-                            console.log("Vaue: " + key2);
-                            console.log("Row " + tr3);
-                            if (items.ignoredDomains[item][key][key2] == 1)
+                            input.id = item + counter;
+                            console.log("Item: " + category + "/" + option);
+                            console.log("Value: " + items.ignoredDomains[item][category][option]);
+                            console.log("Counter: " + counter)
+                            if (items.ignoredDomains[item][category][option] == 1)
                             {
-                                input.checked = key2;   
+                                input.checked = true;
                             }
                             td.appendChild(input);
                             tr3.appendChild(td);
+                            counter++;
                         }
                     }
                 }
             }
             table.appendChild(tr3);
         }
-       });
+    });
+}
+
+function add_domain()
+{
+    var options = get_supported_checks();
+    //doesn't follow the technical spec, but makes an effort to validate
+    var valid_domain = /^[a-z0-9\-]+\.[a-z0-9\-]+$/i;
+    var input = $('.addDomain').val();
+    //be nice and reset the textbox
+    $('.addDomain').val('');
+    
+    //failure conditions
+    if (!valid_domain.test(input))
+    {
+        console.log('Rejected invalid domain')
+        return;
+    }
+    if (my_domains.indexOf(input) >= 0)
+    {
+        console.log('Already added. Idiot.')
+        return;
+    }
+    else
+    {
+        my_domains.push(input);
+    }
+        
+    //generate the HTML and add it. This will probably eventually need to be changed
+    var HTML = '<tr class="addme"><td class="domain" id="domain">' + input + '</td>';
+    for (var i = 0; i < options['count']; i++)
+    {
+        HTML += '<td id="' + input + '"><input type="checkbox" id="' + input + i + '">';
+    }
+    HTML += '</tr>';
+    console.log(HTML);
+    //generate the row and add it
+    $('#myTable tr:last').after(HTML);
 }
 
 document.addEventListener('DOMContentLoaded', restore_options);
 document.getElementById('save').addEventListener('click',
     save_options);
+document.getElementById('add').addEventListener('click',
+    add_domain);
