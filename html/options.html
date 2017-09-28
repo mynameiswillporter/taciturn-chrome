@@ -1,18 +1,49 @@
 <!DOCTYPE html>
 <html>
-<head><title>Options page</title></head>
+<head>
+  <title>Options page</title>
+  <link rel="stylesheet" href="../libraries/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../css/default.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
 <body>
-
-Ignore domain:
-<select id="domain">
-    <option value="Google">Google</option>
-    <option value="Yahoo">Yahoo</option>
-</select>
-
-<div id="status"></div>
-<button id="save">Save</button>
-
-<script src="../js/options.js"></script>
-
+  <div class="container">
+    <div class="row">
+      <h1>Taciturn-Chrome Options</h1>
+    </div>
+    <div class="row">
+      <p>On this page you can toggle or tweak various options that allow
+        you to alter the behavior of taciturn-chrome.  Without this page
+        its quite feasible that taciturn-chrome would be too annoying
+        to exist.</p>
+    </div>
+    <div class="row">
+      <h2>Ignored Domains</h2>
+    </div>
+    <div class="row input-group">
+      <input class="form-control"
+             id="newDomainToIgnore"
+             type="text"
+             placeholder="Add new ignored domain..."></input>
+      <span class="input-group-btn">
+        <button class="btn btn-default"
+                id="addIgnoredDomain"
+                type="button">Ignore</button>
+      </span>
+    </div>
+    <div class="row">
+      <table class="table table-striped"
+             id="ignoredDomains">
+        <thead>
+          <th>Domain</th>
+          <th>Action</th>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script src="../libraries/js/jquery-1.11.1.js"></script>
+  <script src="../js/options.js"></script>
 </body>
 </html>

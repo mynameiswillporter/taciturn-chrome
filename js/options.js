@@ -1,34 +1,44 @@
-function save_options()
-{
+function load_options() {
+  chrome.storage.sync.get({
+    ignoredDomains: [],
+  },
+  function(items) {
 
-    var domain = [];
-    domain.push(document.getElementById('domain').value);
+    // First removed all entries from the table, so they can
+    // be repopulated.  This will eliminate any inconsistencies we may
+    // have by merely updating the view.
+    $('#ignoredDomains tr').remove();
+
+    // Add all of the ignored domains to the ignored domains table
+    for (var index in items.ignoredDomains) {
+      $('#ignoredDomains> tbody:last-child').append(
+        $('<tr/>').append(
+          $('<td/>').text(items.ignoredDomains[index]),
+          $('<td/>').append('<button/>')
+        )
+      );
+    }
+  });
+}
+
+function add_ignore_domain() {
+  var newDomain = $('#newDomainToIgnore').val();
+  chrome.storage.sync.get({
+    ignoredDomains: [],
+  },
+  function(items) {
+    var newDomains = items.ignoredDomains;
+    newDomains.push(newDomain);
     chrome.storage.sync.set({
-        ignoredDomains: domain
+      ignoredDomains: newDomains
     }, function () {
-        //Update status to let user know options were saved
-        var status = document.getElementById('status');
-        status.textContent = 'Options saved.';
-        setTimoeout(function () {
-            status.textContent = '';
-        }, 750);
+      load_options();
+      $('newDomainToIgnore').val('');
     });
-
+  });
 }
 
-function restore_options()
-{
-    //use the default value = 'google'
-    chrome.storage.sync.get({
-        ignoredDomains: ['Google'],
-    }, function(items) {
-        for (item in items.ignoredDomains)
-        {
-            document.getElementById('domain').value = items.ignoredDomains[item];
-        }
-    });
-}
-
-document.addEventListener('DOMContentLoaded', restore_options);
-document.getElementById('save').addEventListener('click',
-    save_options);
+$(document).ready(function() {
+  load_options();
+  $('#addIgnoredDomain').click(add_ignore_domain);
+});
