@@ -1,6 +1,10 @@
-// Make ignoredDomains a Glolbal variable
+// A Global variable to store ignored Domains.
+// Taciturn-Chrome will not create alerts for
+// domains in this list.  This list can be updated by
+// message passing from the options script.
 var ignoredDomains = [];
 
+// Helper function to get the hostname from a URL
 function getHostname(url) {
   var parser = document.createElement('a');
   parser.href = url;
@@ -48,7 +52,7 @@ $(document).ready(function() {
 
                     // Check for sessions in the url
                     if (containsSessionSubstring(queryString)) {
-                        new Notification('Warning: ' + hostname, {
+                        new Notification('Warning: ', {
                             icon: '../img/popup.png',
                             body: 'Session string found in query string! (' + pageUrl + ') '
                         });
@@ -58,12 +62,12 @@ $(document).ready(function() {
                     chrome.cookies.getAll({'url': pageUrl}, function (cookies) {
 
                         // Analyze the cookies on this page
-                        for (cookie in cookies) {
+                        for (var cookie in cookies) {
                             var cookieName = cookies[cookie].name;
 
                             // Send a notification if there is a possible HttpOnly session cookie
                             if (containsSessionSubstring(cookieName) && !cookies[cookie].httpOnly) {
-                                new Notification('Warning: ' + hostname, {
+                                new Notification('Warning: ', {
                                     icon: '../img/popup.png',
                                     body: 'Insecure session cookie found! (' + cookies[cookie].domain + '/' + cookies[cookie].name + ') '
                                 });
@@ -77,15 +81,13 @@ $(document).ready(function() {
 
                         var fieldName = $(this).attr('name');
                         if (containsSessionSubstring(fieldName)) {
-                            new Notification('Warning: ' + hostname, {
+                            new Notification('Warning: ', {
                                 icon: '../img/popup.png',
                                 body: 'Session found in hidden field! (' + fieldName  + ') '
                             });
                         }
-                    })
-
+                    });
                     sendResponse({farewell: ''});
-
                 }
 
             } else {
