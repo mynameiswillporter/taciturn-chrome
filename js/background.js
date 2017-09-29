@@ -13,7 +13,7 @@ function getHostname(url) {
 
 function createAlert(text) {
   new Notification('Warning', {
-      icon: '../img/popup.png',
+      icon: '../img/warning.png',
       body: text
   });
 }
