@@ -36,9 +36,9 @@ chrome.extension.onRequest.addListener(
 );
 
 $(document).ready(function() {
-
     chrome.runtime.onMessage.addListener(
         function(request, sender, sendResponse) {
+          if (request.greeting === "inspectPage") {
 
             // Make sure that the web page is in the browser and not in the extension
             if (sender.tab) {
@@ -94,6 +94,7 @@ $(document).ready(function() {
                 // It appears as though this occurs when the webpage accessed is the extension
                 console.log("Not processing this page because sender.tab did not exist");
             }
+          }
         }
     );
 });
