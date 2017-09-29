@@ -1,3 +1,9 @@
+function updateIgnoredDomains(ignoredDomains) {
+  chrome.extension.sendRequest({greeting: "updateIgnoredDomains",
+  ignoredDomains: ignoredDomains}, function(response) {});
+}
+
+
 function loadOptions() {
   chrome.storage.sync.get({
     ignoredDomains: [],
@@ -8,7 +14,7 @@ function loadOptions() {
     // be repopulated.  This will eliminate any inconsistencies we may
     // have by merely updating the view.
     $('#ignoredDomains > tbody > tr > td').parent('tr').empty();
-
+    updateIgnoredDomains(items.ignoredDomains);
     // Add all of the ignored domains to the ignored domains table
     for (var index in items.ignoredDomains) {
       $('#ignoredDomains> tbody:last-child').append(
