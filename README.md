@@ -3,6 +3,18 @@ Taciturn-Chrome is a chrome extension to perform passive analysis of the
 security of a website.  It doesn't alter the behavior of browsing a website,
 but can alert on possible misconfigurations that can be security-sensitive.
 
+## Ignoring Domains
+Taciturn-Chrome can be noisy, so its imperative that you can ignore
+sites on a per-domain basis.  To do so you must include sites in your
+ignored domains via the options menu.  To access the options menu perform
+the following:
+1. In a chrome browser navigate to `chrome://extensions`
+2. Find taciturn-chrome and click the link titled 'Options'
+
+To ignore a new domain, find the ignore domains section, type a domain
+and click ignore.  The new domain should appear in the ignored domains list.
+To remove a domain from the ignored domains, simply click remove.
+
 ## Developer Installation
 1. In a chrome browser navigate to `chrome://extensions`
 2. Make sure the 'Developer Mode' checkbox is selected in the right hand
