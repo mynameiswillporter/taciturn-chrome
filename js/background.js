@@ -98,4 +98,26 @@ $(document).ready(function() {
           sendResponse({farewell: ''});
         }
     );
+
+    // Allow the toggling of the extension
+    chrome.browserAction.onClicked.addListener(function(tab) {
+      chrome.storage.sync.get('state', function(data) {
+        if (data.state === 'on') {
+          chrome.storage.sync.set({state: 'off'});
+          chrome.browserAction.setIcon({path: "../img/icon-off.png"});
+        } else {
+          chrome.storage.sync.set({state: 'on'});
+          chrome.browserAction.setIcon({path: "../img/icon-on.png"});
+        }
+      });
+    });
+
+    // Initial loading determination
+    chrome.storage.sync.get('state', function(data) {
+      if (data.state === 'on') {
+        chrome.browserAction.setIcon({path: "../img/icon-on.png"});
+      } else {
+        chrome.browserAction.setIcon({path: "../img/icon-off.png"});
+      }
+    });
 });

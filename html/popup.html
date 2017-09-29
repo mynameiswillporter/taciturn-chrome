@@ -1,31 +1,25 @@
 <html>
-    <head>
-        <title></title>
-        <link rel="stylesheet" href="../libraries/css/bootstrap.min.css">
-        <link rel="stylesheet" href="../css/default.css">
-    </head>
-    <body>
-        <div class="btn-group btn-group">
-            <button type="button" class="btn btn-default">
-                <span class="glyphicon glyphicon-globe"></span> Site
-            </button>
-            <button type="button" class="btn btn-default">
-                <span class="glyphicon glyphicon-search"></span> By Name
-            </button>
-        </div>
-        <div id="content">This is some content.</div>
-        <div>
-            <label class="checkbox-inline">
-              <input type="checkbox" id="inlineCheckbox1" value="option1"> 1
-            </label>
-            <label class="checkbox-inline">
-              <input type="checkbox" id="inlineCheckbox2" value="option2"> 2
-            </label>
-            <label class="checkbox-inline">
-              <input type="checkbox" id="inlineCheckbox3" value="option3"> 3
-            </label>
-        </div>
-        <script src="../libraries/js/jquery-1.11.1.js"></script>
-        <script src="../libraries/js/bootstrap.min.js"></script>
-    </body>
+  <head>
+    <title></title>
+    <link rel="stylesheet" href="../libraries/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/default.css">
+  </head>
+  <body>
+    <div class="container">
+      <div class="row">
+        <div><b>Current Domain: </b></div>
+        <div id="currentDomain"></div>
+      </div>
+      <div class="row">
+        <div><b>Status: </b></div>
+        <div id="extensionStatus"></div>
+      </div>
+      <div class="row">
+        <button id="extensionStatusToggle" class="btn btn-success">Enable</button>
+      </div>
+    </div>
+    <script src="../libraries/js/jquery-1.11.1.js"></script>
+    <script src="../libraries/js/bootstrap.min.js"></script>
+    <script src="../js/popup.js"></script>
+  </body>
 </html>
