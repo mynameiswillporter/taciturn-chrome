@@ -18,6 +18,28 @@ function createAlert(text) {
   });
 }
 
+function ruleSessionInQueryString(pageData, alertFunction) {
+  // Get the query string part of the url
+  var queryString = $('<a>', { href:pageData.url } )[0].search;
+
+  // Check for sessions in the url
+  if (containsSessionSubstring(queryString)) {
+    alertFunction('Session string found in query string! (' + pageUrl + ') ');
+  }
+}
+
+function ruleInsecureSessionCookie(pageData, alertFunction) {
+  // Analyze the cookies on this page
+  for (var cookie in pageData.cookies) {
+      var cookieName = pageData.cookies[cookie].name;
+
+      // Send a notification if there is a possible HttpOnly session cookie
+      if (containsSessionSubstring(cookieName) && !pageData.cookies[cookie].httpOnly) {
+          alertFunction('Insecure session cookie found! (' + pageData.cookies[cookie].domain + '/' + pageData.cookies[cookie].name + ')');
+      }
+  }
+}
+
 function containsSessionSubstring(testString) {
     // These are the strings used to identify possible session cookies
     //var sessionSubstrings = [ "session", "sid", "PHPSESSID", "csrf" ];
@@ -54,44 +76,26 @@ $(document).ready(function() {
               var hostname = getHostname(pageUrl);
 
               if (!ignoredDomains.includes(hostname)) {
-                    // Get the query string part of the url
-                    var queryString = $('<a>', { href:pageUrl } )[0].search;
-
-                    // Check for sessions in the url
-                    if (containsSessionSubstring(queryString)) {
-                      createAlert('Session string found in query string! (' + pageUrl + ') ');
-                    }
-
-                    // Look through all of the cookies associated with this page
                     chrome.cookies.getAll({'url': pageUrl}, function (cookies) {
 
-                        // Analyze the cookies on this page
-                        for (var cookie in cookies) {
-                            var cookieName = cookies[cookie].name;
+                      // Create the data we will send to rules
+                      pageData = {};
+                      pageData.url = pageUrl;
+                      pageData.cookies = cookies;
 
-                            // Send a notification if there is a possible HttpOnly session cookie
-                            if (containsSessionSubstring(cookieName) && !cookies[cookie].httpOnly) {
-                                createAlert('Insecure session cookie found! (' + cookies[cookie].domain + '/' + cookies[cookie].name + ')');
-                            }
-                        }
+                      // Run the rules
+                      ruleSessionInQueryString(pageData, createAlert);
+                      ruleInsecureSessionCookie(pageData, createAlert);
                     });
-
-                    // This is wrong because its not checking the dom of the webpage.
-                    // Check hidden elements for session stuff.
-                    $('input:hidden').each(function() {
-                        var fieldName = $(this).attr('name');
-                        if (containsSessionSubstring(fieldName)) {
-                          createAlert('Session found in hidden field! (' + fieldName  + ')');
-                        }
-                    });
-                    sendResponse({farewell: ''});
-                }
-
+              } else {
+                console.log("Domain is in ignored domains list.");
+              }
             } else {
                 // It appears as though this occurs when the webpage accessed is the extension
                 console.log("Not processing this page because sender.tab did not exist");
             }
           }
+          sendResponse({farewell: ''});
         }
     );
 });
