@@ -120,4 +120,9 @@ $(document).ready(function() {
         chrome.browserAction.setIcon({path: "../img/icon-off.png"});
       }
     });
+
+    // Update ignoredDomains on a reload fixes #20
+    chrome.storage.sync.get({ignoredDomains: []}, function(items) {
+      ignoredDomains = items.ignoredDomains;
+    });
 });
