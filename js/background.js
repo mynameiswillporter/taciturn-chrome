@@ -11,6 +11,13 @@ function getHostname(url) {
   return parser.hostname;
 }
 
+function createAlert(text) {
+  new Notification('Warning', {
+      icon: '../img/popup.png',
+      body: text
+  });
+}
+
 function containsSessionSubstring(testString) {
     // These are the strings used to identify possible session cookies
     //var sessionSubstrings = [ "session", "sid", "PHPSESSID", "csrf" ];
@@ -42,7 +49,7 @@ $(document).ready(function() {
 
             // Make sure that the web page is in the browser and not in the extension
             if (sender.tab) {
-              // get the url of the page
+
               var pageUrl = sender.tab.url;
               var hostname = getHostname(pageUrl);
 
@@ -52,10 +59,7 @@ $(document).ready(function() {
 
                     // Check for sessions in the url
                     if (containsSessionSubstring(queryString)) {
-                        new Notification('Warning: ', {
-                            icon: '../img/popup.png',
-                            body: 'Session string found in query string! (' + pageUrl + ') '
-                        });
+                      createAlert('Session string found in query string! (' + pageUrl + ') ');
                     }
 
                     // Look through all of the cookies associated with this page
@@ -67,10 +71,7 @@ $(document).ready(function() {
 
                             // Send a notification if there is a possible HttpOnly session cookie
                             if (containsSessionSubstring(cookieName) && !cookies[cookie].httpOnly) {
-                                new Notification('Warning: ', {
-                                    icon: '../img/popup.png',
-                                    body: 'Insecure session cookie found! (' + cookies[cookie].domain + '/' + cookies[cookie].name + ') '
-                                });
+                                createAlert('Insecure session cookie found! (' + cookies[cookie].domain + '/' + cookies[cookie].name + ')');
                             }
                         }
                     });
@@ -78,13 +79,9 @@ $(document).ready(function() {
                     // This is wrong because its not checking the dom of the webpage.
                     // Check hidden elements for session stuff.
                     $('input:hidden').each(function() {
-
                         var fieldName = $(this).attr('name');
                         if (containsSessionSubstring(fieldName)) {
-                            new Notification('Warning: ', {
-                                icon: '../img/popup.png',
-                                body: 'Session found in hidden field! (' + fieldName  + ') '
-                            });
+                          createAlert('Session found in hidden field! (' + fieldName  + ')');
                         }
                     });
                     sendResponse({farewell: ''});
